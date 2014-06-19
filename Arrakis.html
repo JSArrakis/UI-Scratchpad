@@ -1,0 +1,141 @@
+<html>
+	<head>
+		<script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.1.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.8/TweenMax.min.js"></script>
+    <script defer="defer">
+		load = function () {
+			var stage = new Kinetic.Stage({
+				container: 'container',
+				width: 1920,
+				height: 1080
+			});
+			
+			
+			
+			var xc = stage.width()/2;
+				
+			var yc = stage.height()/2;
+			
+			var xt = stage.width()/2;
+			
+			var yt = stage.height()/2;
+		  
+			var layer = new Kinetic.Layer();
+			var secondLayer = new Kinetic.Layer();
+			var mainLayer = new Kinetic.Layer();
+			var circleLayer = new Kinetic.Layer();
+			
+			var triCoord = [[[-13,-8,0],[0,-16,180],[13,-8,0]], //this is the 3D array
+							[[-13,8,180],[0,16,0],[13,8,180]]];
+			
+			function createTri(x, y, z) {  //This creates each triangle (Kinetic Polygon) and adds it to the kinetic layer.
+				var tri = new Kinetic.RegularPolygon({
+					x: x,
+					y: y,
+					sides: 3,
+					radius: 15,
+					rotation: z,
+					fillRed: 17,
+					fillGreen: 17,
+					fillBlue: 17,
+					closed: true,
+					shadowColor: '#5febff',
+					shadowBlur: 5,
+					shadowOpacity: 0.18
+				});
+				
+				layer.add(tri);
+			}
+			
+			
+			for (var i = 0; i < triCoord.length; i++){    //This populates the triangles using the 3D Array.
+				for (var j = 0; j < triCoord[i].length; j++){
+					createTri(xt+triCoord[i][j][0],yt+triCoord[i][j][1],triCoord[i][j][2]);
+				};
+			}	
+		
+			
+			stage.add(mainLayer);
+			stage.add(layer);
+			stage.add(secondLayer);
+			stage.add(circleLayer);
+
+			layer.on('mouseenter', function(evt) {
+				var shape = evt.targetNode;
+				shape.moveTo(secondLayer);
+				shape.setAttrs({
+					shadowColor: '#ff5200',
+					shadowBlur: 10,
+					shadowOpacity: 1,
+					
+				});
+				stage.draw()
+				var tween = new Kinetic.Tween({
+					node: shape,
+					duration: 0.00001,
+					fillRed: 51,
+					fillGreen: 26,
+					fillBlue: 6,
+					strokeRed: 255,
+					strokeGreen: 138,
+					strokeBlue: 0,
+					strokeAlpha: 0.4,
+					strokeWidth: 1,
+				});
+				tween.play()
+			});
+		  
+			secondLayer.on('mouseout', function(evt) {
+				var shape = evt.targetNode;
+				shape.setAttrs({
+					shadowColor: '#5febff',
+					shadowBlur: 5,
+					shadowOpacity: 0.18,
+				});
+				var tween = new Kinetic.Tween({
+					node: shape,
+					duration: 0.5,
+					fillRed: 17,
+					fillGreen: 17,
+					fillBlue: 17,
+					strokeAlpha: 0,
+					onFinish: function() {
+						shape.moveTo(layer);
+						layer.draw();
+					}
+				});
+				tween.play();		
+			});
+			
+		}
+		document.addEventListener('DOMContentLoaded', load, false);    
+    </script>
+		<style>
+			*{
+				margin:0; 
+				padding:0; 
+				border: 0; 
+				line-height: 100%; 
+				font-size: 100%;
+			}
+			#paradigm{
+				background-color: #181818;
+				height: 100%;
+				width: 100%;
+				overflow: hidden
+			}
+			#container {
+				position:relative;
+				top:50%;
+				left:50%;
+				margin-left: -960px;
+				margin-top: -540px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="paradigm">
+    <div id="container"></div>
+</div>
+	</body>
+</html>
