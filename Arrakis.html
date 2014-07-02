@@ -1,7 +1,6 @@
 <html>
 	<head>
 		<script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.1.min.js"></script>
-		<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.11.8/TweenMax.min.js"></script>
     <script defer="defer">
 		load = function () {
 			var stage = new Kinetic.Stage({
@@ -10,25 +9,66 @@
 				height: 1080
 			});
 			
-			
-			
-			var xc = stage.width()/2;
-				
-			var yc = stage.height()/2;
-			
-			var xt = stage.width()/2;
-			
-			var yt = stage.height()/2;
-		  
 			var layer = new Kinetic.Layer();
 			var secondLayer = new Kinetic.Layer();
 			var mainLayer = new Kinetic.Layer();
 			var circleLayer = new Kinetic.Layer();
 			
-			var triCoord = [[[-13,-8,0],[0,-16,180],[13,-8,0]], //this is the 3D array
-							[[-13,8,180],[0,16,0],[13,8,180]]];
+			var xc = stage.width()/2;
 			
-			function createTri(x, y, z) {  //This creates each triangle (Kinetic Polygon) and adds it to the kinetic layer.
+			var yc = stage.height()/2;
+			
+			var xt = stage.width()/2;
+			
+			var yt = stage.height()/2;
+			
+			var radius = 300;
+			
+			var radiusTwo = 150;
+			
+			var pax = [];
+			
+			//Pushes the coordinates to the 3D Array (This works correctly)
+			for (var i = 0; i < stage.height()/12; i++){
+				pax[i] = [];
+				for (var j = 0; j < stage.width()/12; j++){
+					pax[i][j] = [];
+					pax[i][j].push(j*12-(stage.width()/2)+xt,i*-12+(stage.height()/2)+yt);
+				};
+			}
+			
+			var foo = [];
+			
+			for (var i = 0; i < stage.height()/24; i++){
+				foo[i] = [];
+			}
+			
+			console.log(xt-(13*(Math.ceil(xt/13)))+(i*13)); //left most possible triangle (without orientation) and loop iteration
+			
+			if (((Math.ceil((stage.width()-xt)/13))%2=0)&&((Math.ceil((stage.height()-yt)/24))%2=0)) { return  //finding triangle orientation
+			
+			function createBox(x, y) { //box creation
+			
+				var box = new Kinetic.Rect({
+					x: x,
+					y: y,
+					width: 11,
+					height: 11,
+					fillRed: 17,
+					fillGreen: 17,
+					fillBlue: 17,
+					closed: true,
+					shadowColor: '#5febff',
+					shadowBlur: 3,
+					shadowOpacity: 0.18
+				});
+				
+				if (((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) < Math.pow(radius,2))&&((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) > Math.pow(radiusTwo,2))){
+					layer.add(box); 
+				};
+			}
+			
+			function createTri(x, y, z) {
 				var tri = new Kinetic.RegularPolygon({
 					x: x,
 					y: y,
@@ -44,17 +84,147 @@
 					shadowOpacity: 0.18
 				});
 				
-				layer.add(tri);
+				if (((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) < Math.pow(radius,2))&&((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) > Math.pow(radiusTwo,2))){ //Need a buffer for ring
+					layer.add(tri);
+				};
+			}
+
+
+			//drawing triangles to correct grid coordinates (This works properly)
+			for (var i = 0; i < pax.length; i++){
+				for (var j = 0; j < pax[i].length; j++){
+					createBox(pax[i][j][0],pax[i][j][1]);
+				};
 			}
 			
+			var top = new Kinetic.Line({
+				points: [xc-57, yc-64, xc+55, yc-64, xc+64, yc-47, xc+54, yc-41, xc-56, yc-41, xc-66, yc-47],
+				fill: '#111111',
+				closed: true,
+				shadowColor: '#5febff',
+				shadowBlur: 5,
+				shadowOpacity: 0.18,
+			});
 			
-			for (var i = 0; i < triCoord.length; i++){    //This populates the triangles using the 3D Array.
-				for (var j = 0; j < triCoord[i].length; j++){
-					createTri(xt+triCoord[i][j][0],yt+triCoord[i][j][1],triCoord[i][j][2]);
-				};
-			}	
+			var right = new Kinetic.Line({
+				points: [xc+66, yc-43, xc+76, yc-25, xc+22, yc+70, xc+2, yc+70, xc+2, yc+58, xc+54, yc-36],
+				fill: '#111111',
+				closed: true,
+				shadowColor: '#5febff',
+				shadowBlur: 5,
+				shadowOpacity: 0.18,
+			});
+			
+			var left = new Kinetic.Line({
+				points: [xc-68, yc-43, xc-56, yc-36, xc-3, yc+58, xc-3, yc+70, xc-23, yc+70, xc-78, yc-25],
+				fill: '#111111',
+				closed: true,
+				shadowColor: '#5febff',
+				shadowBlur: 5,
+				shadowOpacity: 0.18,
+			});
+			
+			var cent = new Kinetic.RegularPolygon({
+				x: xc-1,
+				y: yc-7,
+				sides: 6,
+				radius: 12,
+				rotation: 90,
+				fillRed: 51,
+				fillGreen: 26,
+				fillBlue: 6,
+				strokeRed: 255,
+				strokeGreen: 138,
+				strokeBlue: 0,
+				strokeAlpha: 0.6,
+				strokeWidth: 1,
+				closed: true,
+				shadowColor: '#ff5200',
+				shadowBlur: 10,
+			});
+			
+			var lineone = new Kinetic.Line({
+				points: [xc+22, yc+70, xc+2, yc+70],
+				stroke: "#999999",
+				strokeWidth: .3,
+			});
+			
+			var linetwo = new Kinetic.Line({
+				points: [xc+76, yc-25, xc+22, yc+70],
+				stroke: "#494949",
+				strokeWidth: .3
+			});
+			
+			var linethree = new Kinetic.Line({
+				points: [xc-3, yc+70, xc-23, yc+70],
+				stroke: "#999999",
+				strokeWidth: .3
+			});
+			
+			var linefour = new Kinetic.Line({
+				points: [xc-23, yc+70, xc-78, yc-25],
+				stroke: "#494949",
+				strokeWidth: .3
+			});
+			
+			var linefive = new Kinetic.Line({
+				points: [xc+64, yc-47, xc+54, yc-41, xc-56],
+				stroke: "#494949",
+				strokeWidth: .3,
+				opacity: .8
+			});
+			
+			var linesix = new Kinetic.Line({
+				points: [xc+54, yc-41, xc-56, yc-41],
+				stroke: "#999999",
+				strokeWidth: .3,
+				opacity: .8
+			});
+			
+			var lineseven = new Kinetic.Line({
+				points: [xc-56, yc-41, xc-66, yc-47],
+				stroke: "#494949",
+				strokeWidth: .3,
+				opacity: .8
+			});
+			
+			var lineeight = new Kinetic.Line({
+				points: [xc+13, yc-6, xc+7, yc+5],
+				stroke: "#595959",
+				strokeWidth: 1,
+				opacity: .5
+			});
+			
+			var linenine = new Kinetic.Line({
+				points: [xc+7, yc+5, xc-8, yc+5],
+				stroke: "#999999",
+				strokeWidth: .3,
+				opacity: .9
+			});
+			
+			var lineten = new Kinetic.Line({
+				points: [xc-8, yc+5, xc-15, yc-6],
+				stroke: "#595959",
+				strokeWidth: .5,
+				opacity: .5
+			});
 		
-			
+			mainLayer.add(top);
+			mainLayer.add(right);
+			mainLayer.add(left);
+			mainLayer.add(cent);
+			mainLayer.add(lineone);
+			mainLayer.add(linetwo);
+			mainLayer.add(linethree);
+			mainLayer.add(linefour);
+			mainLayer.add(linefive);
+			mainLayer.add(linesix);
+			mainLayer.add(lineseven);
+			mainLayer.add(lineeight);
+			mainLayer.add(linenine);
+			mainLayer.add(lineten);
+
+
 			stage.add(mainLayer);
 			stage.add(layer);
 			stage.add(secondLayer);
@@ -65,7 +235,7 @@
 				shape.moveTo(secondLayer);
 				shape.setAttrs({
 					shadowColor: '#ff5200',
-					shadowBlur: 10,
+					shadowBlur: 7,
 					shadowOpacity: 1,
 					
 				});
@@ -89,7 +259,7 @@
 				var shape = evt.targetNode;
 				shape.setAttrs({
 					shadowColor: '#5febff',
-					shadowBlur: 5,
+					shadowBlur: 3,
 					shadowOpacity: 0.18,
 				});
 				var tween = new Kinetic.Tween({
