@@ -25,26 +25,22 @@
 			
 			var radiusTwo = 150;
 			
+			var xOrigin = xt-(13*(Math.ceil(xt/13)))
+			
 			var pax = [];
 			
 			//Pushes the coordinates to the 3D Array (This works correctly)
-			for (var i = 0; i < stage.height()/12; i++){
+			for (var i = 0; i < Math.ceil(stage.height()/24); i++){
 				pax[i] = [];
-				for (var j = 0; j < stage.width()/12; j++){
+				for (var j = 0; j < Math.ceil(stage.width()/13); j++){
 					pax[i][j] = [];
-					pax[i][j].push(j*12-(stage.width()/2)+xt,i*-12+(stage.height()/2)+yt);
+					pax[i][j].push(xOrigin+(i*13)),i*-12+(stage.height()/2)+yt;
 				};
 			}
 			
-			var foo = [];
+			console.log(xOrigin); //left most possible triangle (without orientation) and loop iteration
 			
-			for (var i = 0; i < stage.height()/24; i++){
-				foo[i] = [];
-			}
-			
-			console.log(xt-(13*(Math.ceil(xt/13)))+(i*13)); //left most possible triangle (without orientation) and loop iteration
-			
-			if (((Math.ceil((stage.width()-xt)/13))%2=0)&&((Math.ceil((stage.height()-yt)/24))%2=0)) { return  //finding triangle orientation
+			/*if (((Math.ceil((stage.width()-xt)/13))%2=0)&&((Math.ceil((stage.height()-yt)/24))%2=0)) { return*/  //finding triangle orientation
 			
 			function createBox(x, y) { //box creation
 			
