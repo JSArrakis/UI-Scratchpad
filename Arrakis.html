@@ -13,57 +13,41 @@
 			var secondLayer = new Kinetic.Layer();
 			var mainLayer = new Kinetic.Layer();
 			
-			var xc = stage.width()/2;
+			var xc = stage.width()/2; //Center point of x axis used by symbol
 			
-			var yc = stage.height()/2;
+			var yc = stage.height()/2; //Center point of y axis used by symbol
 			
-			var xt = stage.width()/2;
+			var xt = stage.width()/2; //Center point of x axis used by grid
 			
-			var yt = stage.height()/2;
+			var yt = stage.height()/2; //Center point of y axis used by grid
 			
-			var radius = 300;
+			var radius = 260; //Size of outer radius of ring
 			
-			var radiusTwo = 150;
+			var radiusTwo = 130; //Size of inner radius of ring
 			
-			var xOrigin = xt-(13*(Math.ceil(xt/13)))
+			var xOrigin = xt-(13*(Math.ceil(xt/13))) //Finds the left most x coordinate
 			
-			var pax = [];
+			var yOrigin = yt-(24*(Math.ceil(yt/24))) //Finds the bottom most y coordinate
 			
-			//Pushes the coordinates to the 3D Array (This works correctly)
-			for (var i = 0; i < Math.ceil(stage.height()/24); i++){
-				pax[i] = [];
-				for (var j = 0; j < Math.ceil(stage.width()/13); j++){
+			var xIsEven = Math.ceil(xt/13)%2 //Determines if the interval of x is even or odd
+			
+			var yIsEven = Math.ceil(yt/24)%2 //Determines if the interval of y is even or odd
+			
+			var pax = []; //The main grid array.
+			
+			
+			for (var i = 0; i < Math.ceil(stage.height()/24); i++){ //creates the grid "rows" and first dimension of the array pax
+				pax[i] = []; 
+				for (var j = 0; j < Math.ceil(stage.width()/13); j++){ //create the grid "columns" and the second dimension of array pax
 					pax[i][j] = [];
-					pax[i][j].push(xOrigin+(i*13)),i*-12+(stage.height()/2)+yt;
+					pax[i][j].push(xOrigin+(j*13),yOrigin+(i*24)+((xIsEven===yIsEven)===(i%2===j%2) ? 16 : 8),((xIsEven===yIsEven)===(i%2===j%2) ? 0 : 180)); //creates the third dimension of array pax.
+					//First index takes the xOrigin variable and iterates to create x coordinates for each triangle, Second index takes the yOrigin variable and iterates to create y coordinates for each triangle.
+					//Second index determines the interval of scatter for each triangle based on the index position of the grid.
+					//Third index determines the orientation of the triangle based on the index position of the grid.
 				};
 			}
 			
-			console.log(xOrigin); //left most possible triangle (without orientation) and loop iteration
-			
-			/*if (((Math.ceil((stage.width()-xt)/13))%2=0)&&((Math.ceil((stage.height()-yt)/24))%2=0)) { return*/  //finding triangle orientation
-			
-			function createBox(x, y) { //box creation
-			
-				var box = new Kinetic.Rect({
-					x: x,
-					y: y,
-					width: 11,
-					height: 11,
-					fillRed: 17,
-					fillGreen: 17,
-					fillBlue: 17,
-					closed: true,
-					shadowColor: '#5febff',
-					shadowBlur: 3,
-					shadowOpacity: 0.18
-				});
-				
-				if (((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) < Math.pow(radius,2))&&((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) > Math.pow(radiusTwo,2))){
-					layer.add(box); 
-				};
-			}
-			
-			function createTri(x, y, z) {
+			function createTri(x, y, z) { //Creates a Kinetic triangle by using the parameters passed by the function call createTri
 				var tri = new Kinetic.RegularPolygon({
 					x: x,
 					y: y,
@@ -79,21 +63,19 @@
 					shadowOpacity: 0.18
 				});
 				
-				if (((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) < Math.pow(radius,2))&&((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) > Math.pow(radiusTwo,2))){ //Need a buffer for ring
+				if (((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) < Math.pow(radius,2))&&((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) > Math.pow(radiusTwo,2))){ //Determines the size of the ring using Pythagorean Theorem to determine the distance of each triangle from the center of the stage and only draws the triangles in between the two radii sizes.
 					layer.add(tri);
 				};
 			}
 
-
-			//drawing triangles to correct grid coordinates (This works properly)
 			for (var i = 0; i < pax.length; i++){
 				for (var j = 0; j < pax[i].length; j++){
-					createBox(pax[i][j][0],pax[i][j][1]);
+					createTri(pax[i][j][0],pax[i][j][1],pax[i][j][2]); //Reads the two coordinates and the orientation located in the grid based on index location and then calls the function createTri to create each triangle in the grid.
 				};
 			}
 			
 			var top = new Kinetic.Line({
-				points: [xc-57, yc-64, xc+55, yc-64, xc+64, yc-47, xc+54, yc-41, xc-56, yc-41, xc-66, yc-47],
+				points: [xc-56, yc-64, xc+54, yc-64, xc+63, yc-47, xc+53, yc-41, xc-55, yc-41, xc-65, yc-47],
 				fill: '#111111',
 				closed: true,
 				shadowColor: '#5febff',
@@ -102,7 +84,7 @@
 			});
 			
 			var right = new Kinetic.Line({
-				points: [xc+66, yc-43, xc+76, yc-25, xc+22, yc+70, xc+2, yc+70, xc+2, yc+58, xc+54, yc-36],
+				points: [xc+65, yc-43, xc+75, yc-25, xc+21, yc+70, xc+1, yc+70, xc+1, yc+58, xc+53, yc-36],
 				fill: '#111111',
 				closed: true,
 				shadowColor: '#5febff',
@@ -111,7 +93,7 @@
 			});
 			
 			var left = new Kinetic.Line({
-				points: [xc-68, yc-43, xc-56, yc-36, xc-3, yc+58, xc-3, yc+70, xc-23, yc+70, xc-78, yc-25],
+				points: [xc-67, yc-43, xc-55, yc-36, xc-2, yc+58, xc-2, yc+70, xc-22, yc+70, xc-77, yc-25],
 				fill: '#111111',
 				closed: true,
 				shadowColor: '#5febff',
@@ -120,7 +102,7 @@
 			});
 			
 			var cent = new Kinetic.RegularPolygon({
-				x: xc-1,
+				x: xc,
 				y: yc-7,
 				sides: 6,
 				radius: 12,
