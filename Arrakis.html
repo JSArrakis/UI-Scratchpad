@@ -25,13 +25,13 @@
 			
 			var radiusTwo = 130; //Size of inner radius of ring
 			
-			var xOrigin = xt-(13*(Math.ceil(xt/13))) //Finds the left most x coordinate
+			var xOrigin = xt-(13*(Math.ceil(xt/13))); //Finds the left most x coordinate
 			
-			var yOrigin = yt-(24*(Math.ceil(yt/24))) //Finds the bottom most y coordinate
+			var yOrigin = yt-(24*(Math.ceil(yt/24))); //Finds the bottom most y coordinate
 			
-			var xIsEven = Math.ceil(xt/13)%2 //Determines if the interval of x is even or odd
+			var xIsEven = Math.ceil(xt/13)%2; //Determines if the interval of x is even or odd
 			
-			var yIsEven = Math.ceil(yt/24)%2 //Determines if the interval of y is even or odd
+			var yIsEven = Math.ceil(yt/24)%2; //Determines if the interval of y is even or odd
 			
 			var pax = []; //The main grid array.
 			
@@ -47,8 +47,9 @@
 				};
 			}
 			
-			function createTri(x, y, z) { //Creates a Kinetic triangle by using the parameters passed by the function call createTri
+			function createTri(x, y, z, a) { //Creates a Kinetic triangle by using the parameters passed by the function call createTri
 				var tri = new Kinetic.RegularPolygon({
+					id: a,
 					x: x,
 					y: y,
 					sides: 3,
@@ -65,12 +66,13 @@
 				
 				if (((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) < Math.pow(radius,2))&&((Math.abs(Math.pow((xt-x),2)) + Math.abs(Math.pow((yt-y),2))) > Math.pow(radiusTwo,2))){ //Determines the size of the ring using Pythagorean Theorem to determine the distance of each triangle from the center of the stage and only draws the triangles in between the two radii sizes.
 					layer.add(tri);
+					console.log(a);
 				};
 			}
 
 			for (var i = 0; i < pax.length; i++){
 				for (var j = 0; j < pax[i].length; j++){
-					createTri(pax[i][j][0],pax[i][j][1],pax[i][j][2]); //Reads the two coordinates and the orientation located in the grid based on index location and then calls the function createTri to create each triangle in the grid.
+					createTri(pax[i][j][0],pax[i][j][1],pax[i][j][2],(i+'')+(j+'')); //Reads the two coordinates and the orientation located in the grid based on index location and then calls the function createTri to create each triangle in the grid.
 				};
 			}
 			
