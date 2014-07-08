@@ -22,7 +22,9 @@
 			
 				
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+			var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+			
+			
 
 			var renderer = new THREE.WebGLRenderer({antialias: true});
 			renderer.setSize(window.innerWidth, window.innerHeight);
@@ -32,24 +34,26 @@
 			var geometry = new THREE.TetrahedronGeometry(15,0); 
 			var material = new THREE.MeshLambertMaterial({color: 0x2f2f2f}); 
 			var tri = new THREE.Mesh(geometry, material); 
-			tri.rotation.x = 0; 
-			tri.rotation.y = 0;
-			tri.rotation.z = 0;
+			tri.position.z = -50
+			tri.rotation.z = 0.5
+			console.log(geometry.vertices);
 			scene.add(tri); 
 			
+			scene.updateMatrixWorld();
+			var vector = new THREE.Vector3();
+			vector.setFromMatrixPosition( tri.matrixWorld );
 			
-			camera.position.z = 100;
+			
+			camera.position.z = 50;
 			
 			var pointLight = new THREE.PointLight(0xFFFFFF);
-
-			// set its position
 			pointLight.position.x = 50;
 			pointLight.position.y = 50;
 			pointLight.position.z = 50;
-
-			// add to the scene
 			scene.add(pointLight);
 			
+			var light = new THREE.AmbientLight( 0x1A1A1A );
+			scene.add( light );
 
 			var render = function () {
 				renderer.render(scene, camera);
