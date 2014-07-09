@@ -19,7 +19,31 @@
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.js"></script>
 		<script>
 		
+			var triRad = 15;
+			var triApothem = triRad/2;
+			var triSide = 3*triRad/Math.sqrt(3);
+			var halfTriSide = triSide/2;
+			var tetSideCentroid = 1/(2*Math.sqrt(6))*triSide;
+			var tetTopVertX = 0;
+			var tetTopVertY = triRad;
+			var tetTopVertZ = tetSideCentroid;
+			var tetLeftVertX = -halfTriSide;
+			var tetLeftVertY = -triApothem;
+			var tetLeftVertZ = tetSideCentroid;
+			var tetRightVertX = halfTriSide;
+			var tetRightVertY = -triApothem;
+			var tetRightVertZ = tetSideCentroid;
+			var tetMidVertX = 0
+			var tetMidVertY = 0
+			var tetMidVertZ = -(3/(2*Math.sqrt(6))*triSide);
+			var testSideA =  Math.pow(triApothem, 2) + Math.pow(halfTriSide, 2);
+			var verification = testSideA + Math.pow(tetSideCentroid, 2);
+			var qa = Math.sqrt(verification);
 			
+			
+			console.log(tetMidVertZ);
+			console.log(qa);
+			console.log(tetLeftVertX);
 				
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -34,9 +58,9 @@
 			var geometry = new THREE.TetrahedronGeometry(15,0); 
 			var material = new THREE.MeshLambertMaterial({color: 0x2f2f2f}); 
 			var tri = new THREE.Mesh(geometry, material); 
-			tri.position.z = -50
-			tri.rotation.z = 0.5
-			console.log(geometry.vertices);
+			tri.position.z = -50;
+			tri.rotation.z = 0.785;
+			tri.rotation.x = -4;
 			scene.add(tri); 
 			
 			scene.updateMatrixWorld();
