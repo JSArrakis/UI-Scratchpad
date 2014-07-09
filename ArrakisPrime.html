@@ -33,8 +33,8 @@
 			var tetRightVertX = halfTriSide;
 			var tetRightVertY = -triApothem;
 			var tetRightVertZ = tetSideCentroid;
-			var tetMidVertX = 0
-			var tetMidVertY = 0
+			var tetMidVertX = 0;
+			var tetMidVertY = 0;
 			var tetMidVertZ = -(3/(2*Math.sqrt(6))*triSide);
 			var testSideA =  Math.pow(triApothem, 2) + Math.pow(halfTriSide, 2);
 			var verification = testSideA + Math.pow(tetSideCentroid, 2);
@@ -54,15 +54,28 @@
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			document.body.appendChild(renderer.domElement);
 
+			var rotXDeg = 0;
+			var rotYDeg = 0;
+			var rotZDeg = 0;
 
 			var geometry = new THREE.TetrahedronGeometry(15,0); 
 			var material = new THREE.MeshLambertMaterial({color: 0x2f2f2f}); 
 			var tri = new THREE.Mesh(geometry, material); 
 			tri.position.z = -50;
-			tri.rotation.z = 0.785;
-			tri.rotation.x = -4;
+			tri.rotation.x = rotXDeg * Math.PI / 180;
+			tri.rotation.y = rotYDeg * Math.PI / 180;
+			tri.rotation.z = rotZDeg * Math.PI / 180;
+			
 			scene.add(tri); 
 			
+			var axisHelper = new THREE.AxisHelper( 30 );
+			axisHelper.position.z = -50;
+			axisHelper.rotation.x = rotXDeg * Math.PI / 180;
+			axisHelper.rotation.y = rotYDeg * Math.PI / 180;
+			axisHelper.rotation.z = rotZDeg * Math.PI / 180;
+			scene.add( axisHelper );
+			
+		
 			scene.updateMatrixWorld();
 			var vector = new THREE.Vector3();
 			vector.setFromMatrixPosition( tri.matrixWorld );
