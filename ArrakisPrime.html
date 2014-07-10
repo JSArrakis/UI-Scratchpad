@@ -10,8 +10,8 @@
 			font-size: 100%;
 		}
 		canvas{ 
-			width: 100%; 
-			height: 100% 
+			width: 200%; 
+			height: 200%;
 		}
 		</style>
 	</head>
@@ -39,51 +39,86 @@
 			var testSideA =  Math.pow(triApothem, 2) + Math.pow(halfTriSide, 2);
 			var verification = testSideA + Math.pow(tetSideCentroid, 2);
 			var qa = Math.sqrt(verification);
-			
-			
-			console.log(tetMidVertZ);
-			console.log(qa);
-			console.log(tetLeftVertX);
 				
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
-			
-			
+			var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 2000);
 
 			var renderer = new THREE.WebGLRenderer({antialias: true});
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			document.body.appendChild(renderer.domElement);
+			
+			var xc = 0; //Center point of x axis used by symbol
+			var yc = 0; //Center point of y axis used by symbol
+			var xt = 1920/2; //Center point of x axis used by grid
+			var yt = 1080/2; //Center point of y axis used by grid
+			var radius = 260; //Size of outer radius of ring
+			var radiusTwo = 125; //Size of inner radius of ring
+			var xOrigin = xc-(14*(Math.ceil(xt/14))); //Finds the left most x coordinate
+			var yOrigin = yc-(23*(Math.ceil(yt/23))); //Finds the bottom most y coordinate
+			var xIsEven = Math.ceil(xt/14)%2; //Determines if the interval of x is even or odd
+			var yIsEven = Math.ceil(yt/23)%2; //Determines if the interval of y is even or odd
+			var pax = []; //The main grid array.
+			
+			for (var i = 0; i < Math.ceil(1080/23); i++){ //creates the grid "rows" and first dimension of the array pax
+				pax[i] = []; 
+				for (var j = 0; j < Math.ceil(1920/14); j++){ //create the grid "columns" and the second dimension of array pax
+					pax[i][j] = [];
+					pax[i][j].push(xOrigin+(j*14),yOrigin+(i*23)+((xIsEven===yIsEven)===(i%2===j%2) ? 8 : 15),((xIsEven===yIsEven)===(i%2===j%2) ? -125 : 125)); //creates the third dimension of array pax.
+					//First index takes the xOrigin variable and iterates to create x coordinates for each triangle, Second index takes the yOrigin variable and iterates to create y coordinates for each triangle.
+					//Second index determines the interval of scatter for each triangle based on the index position of the grid.
+					//Third index determines the orientation of the triangle based on the index position of the grid.
+				};
+			}
 
-			var rotXDeg = -125;
-			var rotYDeg = 0;
-			var rotZDeg = 45;
-
-			var geometry = new THREE.TetrahedronGeometry(15,0); 
-			var material = new THREE.MeshLambertMaterial({color: 0x2f2f2f}); 
-			var tri = new THREE.Mesh(geometry, material); 
-			tri.rotation.x = rotXDeg * Math.PI / 180;
-			tri.rotation.y = rotYDeg * Math.PI / 180;
-			tri.rotation.z = rotZDeg * Math.PI / 180;
+			function createTri(x, y, z, a) { //Creates a Kinetic triangle by using the parameters passed by the function call createTri
+				var geometry = new THREE.TetrahedronGeometry(15,0); 
+				var material = new THREE.MeshLambertMaterial({color: 0x111111}); 
+				var tri = new THREE.Mesh(geometry, material); 
+				tri.position.x = x;
+				tri.position.y = y;
+				tri.rotation.x = z * Math.PI / 180;
+				tri.rotation.y = 0 * Math.PI / 180;
+				tri.rotation.z = 45 * Math.PI / 180;
+				
+				if (((Math.abs(Math.pow((xc-x),2)) + Math.abs(Math.pow((yc-y),2))) < Math.pow(radius,2))&&((Math.abs(Math.pow((xc-x),2)) + Math.abs(Math.pow((yc-y),2))) > Math.pow(radiusTwo,2))){ //Determines the size of the ring using Pythagorean Theorem to determine the distance of each triangle from the center of the stage and only draws the triangles in between the two radii sizes.
+					scene.add(tri); 
+				};
+			}
 			
-			scene.add(tri); 
+			for (var i = 0; i < pax.length; i++){
+				for (var j = 0; j < pax[i].length; j++){
+					createTri(pax[i][j][0],pax[i][j][1],pax[i][j][2],(i+'')+(j+'')); //Reads the two coordinates and the orientation located in the grid based on index location and then calls the function createTri to create each triangle in the grid.
+				};
+			}
 			
-			var axisHelper = new THREE.AxisHelper( 30 );
-			axisHelper.rotation.x = rotXDeg * Math.PI / 180;
-			axisHelper.rotation.y = rotYDeg * Math.PI / 180;
-			axisHelper.rotation.z = rotZDeg * Math.PI / 180;
-			scene.add( axisHelper );
+			function createEquiTri(){
+				
+				var vertices = [ 
+					new THREE.Vector3(56,64,0),
+					new THREE.Vector3(-54,64,0),
+					new THREE.Vector3(-63,47,0),
+					new THREE.Vector3(-53,41,0)
+				];
+				var faces = [
+					new THREE.Face3( 0, 1, 3),
+					new THREE.Face3( 2, 3, 1)
+				];
+				var geom = new THREE.Geometry();
+				var material = new THREE.MeshLambertMaterial({color: 0x111111});
+				geom.vertices = vertices;
+				geom.faces = faces;
+				geom.mergeVertices();
+				var shape = new THREE.Mesh(geom, material);
+				scene.add(shape);
+			}
 			
-		
-			scene.updateMatrixWorld();
-			var vector = new THREE.Vector3();
-			vector.setFromMatrixPosition( tri.matrixWorld );
-			
-			
-			camera.position.z = 100;
+			createEquiTri();
+				
+			camera.position.z = 815;
 			
 			var pointLight = new THREE.PointLight(0xFFFFFF);
-			pointLight.position.x = 50;
-			pointLight.position.y = 50;
+			pointLight.position.x = 0;
+			pointLight.position.y = 0;
 			pointLight.position.z = 50;
 			scene.add(pointLight);
 			
