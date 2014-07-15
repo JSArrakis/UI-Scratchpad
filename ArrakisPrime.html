@@ -31,7 +31,7 @@
 
 		<div id="container"></div>
 
-		<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.js"></script>
+		<script src="js/three.js"></script>
 
 		<script>
 
@@ -108,7 +108,7 @@
 				};
 			}
 			
-			function createTri(x, y, z, a) { //Creates a Kinetic triangle by using the parameters passed by the function call createTri
+			function createTri(x, y, z, a) { //Creates a tetrahedron by using the parameters passed by the function call createTri
 				var geometry = new THREE.TetrahedronGeometry(15,0); 
 				var material = new THREE.MeshLambertMaterial({color: 0x111111}); 
 				var tri = new THREE.Mesh(geometry, material); 
@@ -334,7 +334,7 @@
 			scene.add( light );
 			
 			
-			var dirs = ['fJ9t36S', 'HCbTO4u', 'bH8flnq', 'ii5b4Vi', 'zGU49Py', 'OHWx8yx'];
+			var skyFaces = ['fJ9t36S', 'HCbTO4u', 'bH8flnq', 'ii5b4Vi', 'zGU49Py', 'OHWx8yx'];
 			var prefix = 'images/';
 			var suffix = '.png';
 			
@@ -345,7 +345,7 @@
 			for(i = 0; i < 6; i++) {
 				mats.push(new THREE.MeshBasicMaterial({
 					blending: THREE.AdditiveBlending,
-					map: THREE.ImageUtils.loadTexture(prefix + dirs[i] + suffix),
+					map: THREE.ImageUtils.loadTexture(prefix + skyFaces[i] + suffix),
 					side: THREE.BackSide
 				}));
 			}
